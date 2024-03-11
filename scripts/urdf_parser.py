@@ -171,7 +171,7 @@ class URDFParser():
                 return xyz, rpy
     
     def link_has_child(self, link_name):
-        return self.robot.child_map.has_key(link_name)
+        return link_name in self.robot.child_map
 
     def link_attached_to_base(self, link_name):
         attached_joint, parent_link = self.robot.parent_map[link_name]
@@ -239,18 +239,24 @@ class URDFParser():
         new_end_links = []
         no_of_actuators = []
 
-        #get no of actuators for each link
+         # Get the number of actuators for each link
         for link in end_links:
             no_of_actuators.append(self.get_no_of_actuators(link))
 
-        max_actuator_count = max(no_of_actuators)
+        # Check if no_of_actuators is not empty before finding the maximum
+        if no_of_actuators:
+            max_actuator_count = max(no_of_actuators)
+        else:
+            # Handle the case when no_of_actuators is empty
+            max_actuator_count = 0  # Set a default value or handle it based on your requirements
 
-        #add end_links that only has the max counted no of actuators
+        # Add end_links that only have the maximum counted number of actuators
         for i in range(len(end_links)):
             if no_of_actuators[i] == max_actuator_count:
                 new_end_links.append(end_links[i])
 
         return new_end_links
+
 
     def get_foot_links(self):
         def get_common_string(str1,str2):
